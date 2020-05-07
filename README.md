@@ -32,7 +32,7 @@ The Bowling Score API provides an endpoint at the root route which returns a Str
 
 * Example
 
-```curl localhost:8080/```
+  ```curl localhost:8080/```
 
 ### Start Game
 The Bowling Score API provides an endpoint to tell the system that a new games needs to be initialized.
@@ -41,7 +41,7 @@ The Bowling Score API provides an endpoint to tell the system that a new games n
 
 * Example
 
-```curl -X POST localhost:8080/game```
+  ```curl -X POST localhost:8080/game```
 
 ### Get Game Information
 The Bowling Score API provides an endpoint to retrieve game information. The endpoint returns a JSON object with the following information:
@@ -53,7 +53,7 @@ The Bowling Score API provides an endpoint to retrieve game information. The end
 
 * Example
 
-```curl localhost:8080/game/{gameId}```
+  ```curl localhost:8080/game/{gameId}```
 
 ### Add a Player to Game
 The Bowling Score API provides an endpoint to add a list of players to a game. The endpoint returns a JSON object with the following information:
@@ -66,7 +66,7 @@ The endpoint accepts a JSON list with the name of each player.
 
 * Example
 
-```curl -H "Content-type: application/json" -X POST --data '["test1", "test2"]' localhost:8080/game/{gameId}/player```
+  ```curl -H "Content-type: application/json" -X POST --data '["test1", "test2"]' localhost:8080/game/1/player```
 
 ### Roll Result
 The Bowling Score API provides and endpoint to submit a the number of pins knocked down. It returns a JSON object representing a Player information.
@@ -75,7 +75,7 @@ The Bowling Score API provides and endpoint to submit a the number of pins knock
 
 * Example
 
-```curl -X PUT localhost:8080/game/1/test/roll/4```
+  ```curl -X PUT localhost:8080/game/1/test/roll/4```
 
 ### Get Score of a Player's Game
 The Bowling Score API provides an endpoint to retrieve the score of a player's game.
@@ -83,4 +83,4 @@ The Bowling Score API provides an endpoint to retrieve the score of a player's g
 
 * Example
 
-```curl localhost:8080/game/1/player/test/score```
+  ```curl localhost:8080/game/1/player/test/score```
