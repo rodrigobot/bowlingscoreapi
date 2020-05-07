@@ -1,4 +1,4 @@
-# Bowling Score API
+# Bowling Score REST API
 A RestFul API that can be use to manage the score of a bowling game.
 
 # Requirements
@@ -18,6 +18,8 @@ Given a valid sequence of rolls for one line of American Ten-Pin Bowling, produc
 # Dependencies
 * Java 8
 * Maven3
+* H2
+We use an in memory database but this can be moved to a traditional database if required by changing the configuration.
 
 # How to use
 Run Integration Tests, Unit Test and create an executable jar
@@ -27,6 +29,8 @@ Run Integration Tests, Unit Test and create an executable jar
 Start API server
 
 ```java -jar target/bowlingscore-1.0.0.jar```
+
+Server will be listening on port `8080`
 
 # API Endpoints
 
