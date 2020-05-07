@@ -73,7 +73,12 @@ public class BowlingScoreController {
      */
     @PostMapping(path = "/game/{id}/player", consumes = "application/json")
     public Game addPlayer(@PathVariable("id") long gameId, @RequestBody List<String> names) {
-        return gameService.addPlayers(gameId, names);
+        Game game = gameService.addPlayers(gameId, names);
+        if (game == null) {
+            throw new GameNotFound("Game not found");
+        }
+
+        return game;
     }
 
     /**
