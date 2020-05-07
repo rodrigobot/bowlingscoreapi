@@ -11,6 +11,10 @@ Given a valid sequence of rolls for one line of American Ten-Pin Bowling, produc
 * If on his first try in the frame he knocks down all the pins, this is called a "strike" His turn is over, and his score for the frame is ten plus the simple total of the pins knocked down in his next two rolls.
 * If he gets a spare or strike in the last (tenth) frame, the bowler gets to throw one or two more bonus balls, respectively. - These bonus throws are taken as part of the same turn. If the bonus throws knock down all the pins, the process does not repeat: the bonus throws are only used to calculate the score of the final frame.
 
+# Dependencies
+* Java 8
+* Maven3
+
 # How to use
 Run Integration Tests, Unit Test and create an executable jar
 
