@@ -1,5 +1,6 @@
 package com.robot.bowlingscore.services;
 
+import com.robot.bowlingscore.errors.GameCompleteException;
 import com.robot.bowlingscore.model.BowlingFrame;
 import com.robot.bowlingscore.model.Game;
 import com.robot.bowlingscore.model.Player;
@@ -96,6 +97,10 @@ public class GameService {
         // add roll to current frame or create new frame
         if (player != null) {
             List<BowlingFrame> frames = player.getFrames();
+            if (frames.size() == 10 && frames.get(9).isCompleteFrame()) {
+                throw new GameCompleteException("Game has finished");
+            }
+
             if ((frames.size() == 0 || frames.get(frames.size()-1).getRolls() == 2) && frames.size() != 10) {
                 BowlingFrame temp = new BowlingFrame();
                 temp.setFirstRoll(pins);
