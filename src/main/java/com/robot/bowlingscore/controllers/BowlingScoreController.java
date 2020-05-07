@@ -1,5 +1,7 @@
 package com.robot.bowlingscore.controllers;
 
+import com.robot.bowlingscore.errors.GameNotFound;
+import com.robot.bowlingscore.errors.PlayerNotFound;
 import com.robot.bowlingscore.model.Game;
 import com.robot.bowlingscore.model.Player;
 import com.robot.bowlingscore.repository.PlayerRepository;
@@ -53,8 +55,13 @@ public class BowlingScoreController {
      * @return A Json representation of a game which contains an ID, list of players and frames per player
      */
     @GetMapping("/game/{gameId}")
+
     public Game getGameInformation(@PathVariable("gameId") long gameId) {
-        return gameService.getGame(gameId);
+        Game game = gameService.getGame(gameId);
+        if (game == null) {
+            throw new GameNotFound( "Game not found");
+        }
+        return game;
     }
 
     /**
@@ -84,7 +91,12 @@ public class BowlingScoreController {
                     @PathVariable("playerName") String name,
                     @PathVariable("pins") int pins
     ) {
-        return gameService.score(gameId, name, pins);
+        Player player = gameService.score(gameId, name, pins);
+        if (player == null) {
+            throw new PlayerNotFound("Player not found");
+        }
+
+        return player;
     }
 
     /**
@@ -98,6 +110,10 @@ public class BowlingScoreController {
     public int getTotalScore(@PathVariable("gameId") long gameId,
                              @PathVariable("playerName") String name
     ){
-        return gameService.getTotalScore(gameId, name);
+        int total = gameService.getTotalScore(gameId, name);
+        if (total == -100) {
+            throw new PlayerNotFound("Player not found");
+        }
+        return total;
     }
 }

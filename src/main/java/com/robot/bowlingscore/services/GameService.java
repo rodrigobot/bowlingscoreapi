@@ -191,12 +191,16 @@ public class GameService {
      */
     public int getTotalScore (long gameId, String name) {
         Player player = playerRepo.findByNameAndGameId(name, gameId);
-        List<BowlingFrame> frames = player.getFrames();
-        int total = 0;
-        for (int i = 0; i < frames.size(); i++) {
-            total += frames.get(i).getScore();
+        if (player != null) {
+            List<BowlingFrame> frames = player.getFrames();
+            int total = 0;
+            for (int i = 0; i < frames.size(); i++) {
+                total += frames.get(i).getScore();
+            }
+
+            return total;
         }
 
-        return total;
+        return -100;
     }
 }
