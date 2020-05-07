@@ -19,6 +19,7 @@ Given a valid sequence of rolls for one line of American Ten-Pin Bowling, produc
 * Java 8
 * Maven3
 * H2
+
 We use an in memory database but this can be moved to a traditional database if required by changing the configuration.
 
 # How to use
