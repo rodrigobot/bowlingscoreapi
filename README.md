@@ -22,15 +22,15 @@ Run Integration Tests, Unit Test and create an executable jar
 
 Start API server
 
-```java -jar target/bowlingscore-0.0.1-SNAPSHOT.jar```
+```java -jar target/bowlingscore-1.0.0.jar```
 
 # API Endpoints
-### Index
+
 The Bowling Score API provides an endpoint at the root route which returns a String message.
 
 ```GET /```
 
-## Example
+* Example
 
 ```curl localhost:8080/```
 
@@ -39,7 +39,7 @@ The Bowling Score API provides an endpoint to tell the system that a new games n
 
 ```POST /game```
 
-## Example
+* Example
 
 ```curl -X POST localhost:8080/game```
 
@@ -51,7 +51,7 @@ The Bowling Score API provides an endpoint to retrieve game information. The end
 
 ```GET /game/{gameId}```
 
-## Example
+* Example
 
 ```curl localhost:8080/game/{gameId}```
 
@@ -64,7 +64,7 @@ The endpoint accepts a JSON list with the name of each player.
 
 ```POST /game/{gameId}/player```
 
-## Example
+* Example
 
 ```curl -H "Content-type: application/json" -X POST --data '["test1", "test2"]' localhost:8080/game/{gameId}/player```
 
@@ -73,7 +73,7 @@ The Bowling Score API provides and endpoint to submit a the number of pins knock
 
 ```PUT /game/{gameId}/player/{playerName}/roll/{pins}```
 
-## Example
+* Example
 
 ```curl -X PUT localhost:8080/game/1/test/roll/4```
 
@@ -81,6 +81,6 @@ The Bowling Score API provides and endpoint to submit a the number of pins knock
 The Bowling Score API provides an endpoint to retrieve the score of a player's game.
 ```GET /game/{gameId}/player/{playerName}/score```
 
-## Example
+* Example
 
 ```curl localhost:8080/game/1/player/test/score```
