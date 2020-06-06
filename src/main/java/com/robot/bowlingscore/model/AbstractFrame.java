@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "EMP_TYPE")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public abstract class BowlingFrame {
+public abstract class AbstractFrame {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -26,7 +26,7 @@ public abstract class BowlingFrame {
 
     private int firstRoll = -1;
     private int secondRoll = -1;
-    private int score = -1;
+    protected int score = -1;
     private int rolls = 0;
     private boolean completeFrame = false;
 

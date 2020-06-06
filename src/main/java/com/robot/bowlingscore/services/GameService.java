@@ -1,9 +1,7 @@
 package com.robot.bowlingscore.services;
 
 import com.robot.bowlingscore.errors.GameCompleteException;
-import com.robot.bowlingscore.model.BowlingFrame;
-import com.robot.bowlingscore.model.Game;
-import com.robot.bowlingscore.model.Player;
+import com.robot.bowlingscore.model.*;
 import com.robot.bowlingscore.repository.GameRepository;
 import com.robot.bowlingscore.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
@@ -96,29 +94,37 @@ public class GameService {
 
         // add roll to current frame or create new frame
         if (player != null) {
-            List<BowlingFrame> frames = player.getFrames();
+            List<AbstractFrame> frames = player.getFrames();
             if (frames.size() == 10 && frames.get(9).isCompleteFrame()) {
                 throw new GameCompleteException("Game has finished");
             }
 
             if ((frames.size() == 0 || frames.get(frames.size()-1).getRolls() == 2) && frames.size() != 10) {
-                BowlingFrame temp = new BowlingFrame();
-                temp.setFirstRoll(pins);
-                temp.setStrike(isRollStrike(temp.getFirstRoll()));
-                temp.setPlayer(player);
-                temp.setRolls(temp.isStrike() ? 2 : 1);
-                frames.add(temp);
+                if (!isRollStrike(pins)) {
+                    AbstractFrame temp = new BowlingFrame();
+                    temp.setFirstRoll(pins);
+                    temp.setPlayer(player);
+                    temp.setRolls(1);
+                    frames.add(temp);
+                } else {
+                    StrikeFrame temp = new StrikeFrame();
+                    temp.setFirstRoll(pins);
+                    temp.setPlayer(player);
+                    temp.setRolls(2);
+                    frames.add(temp);
+                }
             } else if (frames.get(frames.size()-1).getRolls() == 1 && frames.size() != 10) {
-                BowlingFrame temp = frames.get(frames.size() - 1);
+                AbstractFrame temp = frames.get(frames.size() - 1);
                 temp.setRolls(2);
                 temp.setSecondRoll(pins);
-                temp.setSpare(isRollSpare(temp.getFirstRoll(), temp.getSecondRoll()));
-            } else if (frames.size() == 10 && frames.get(9).isStrike() && frames.get(9).getSecondRoll() == -1) {
-                BowlingFrame temp = frames.get(9);
+                temp = isRollSpare(temp.getFirstRoll(), temp.getSecondRoll()) ? new SpareFrame(temp) : temp;
+                frames.set(frames.size()-1, temp);
+            } else if (frames.size() == 10 && frames.get(9) instanceof StrikeFrame && frames.get(9).getSecondRoll() == -1) {
+                AbstractFrame temp = frames.get(9);
                 temp.setBonusBalls(true);
                 temp.setSecondRoll(pins);
-            } else if (frames.size() == 10 && frames.get(9).isStrike() && frames.get(9).getSecondRoll() != -1) {
-                BowlingFrame temp = frames.get(9);
+            } else if (frames.size() == 10 && frames.get(9) instanceof StrikeFrame && frames.get(9).getSecondRoll() != -1) {
+                AbstractFrame temp = frames.get(9);
                 temp.setBonusBall(pins);
             }
 
@@ -138,11 +144,11 @@ public class GameService {
         return fr + sr == 10 ? true : false;
     }
 
-    private List<BowlingFrame> computeScore(List<BowlingFrame> frames) {
+    private List<AbstractFrame> computeScore(List<AbstractFrame> frames) {
         for (int i =frames.size()-1; i >= 0; i--) {
-            BowlingFrame currentFrame = frames.get(i);
+            AbstractFrame currentFrame = frames.get(i);
             if (frames.size() == 10) {
-                if (!currentFrame.isStrike() && !currentFrame.isSpare()) {
+                if (currentFrame instanceof BowlingFrame) {
                     currentFrame.setScore(currentFrame.getFirstRoll() + currentFrame.getSecondRoll());
                     currentFrame.setCompleteFrame(true);
                 } else if(currentFrame.getSecondRoll() != -1 && currentFrame.getBonusBall() != -1) {
@@ -155,30 +161,28 @@ public class GameService {
                 }
             }
 
-            if (!currentFrame.isCompleteFrame() && !currentFrame.isSpare()
-                    && !currentFrame.isStrike() && currentFrame.getRolls() == 2
-            ) {
+            if (currentFrame instanceof BowlingFrame && !currentFrame.isCompleteFrame() && currentFrame.getRolls() == 2) {
                 currentFrame.setScore(currentFrame.getFirstRoll() + currentFrame.getSecondRoll());
                 currentFrame.setCompleteFrame(true);
-            } else if (!currentFrame.isCompleteFrame() && !currentFrame.isSpare() && !currentFrame.isStrike() && currentFrame.getRolls() ==1) {
+            } else if (currentFrame instanceof BowlingFrame && !currentFrame.isCompleteFrame() && currentFrame.getRolls() ==1) {
                 currentFrame.setScore(currentFrame.getFirstRoll());
-            } else if (!currentFrame.isCompleteFrame() && currentFrame.isStrike() && i == frames.size()-1){
+            } else if (currentFrame instanceof StrikeFrame && !currentFrame.isCompleteFrame() && i == frames.size()-1){
                 currentFrame.setScore(currentFrame.getFirstRoll());
-            } else if (!currentFrame.isCompleteFrame() && currentFrame.isSpare() && i == frames.size()-1) {
+            } else if (currentFrame instanceof SpareFrame && !currentFrame.isCompleteFrame() && i == frames.size()-1) {
                 currentFrame.setScore(currentFrame.getFirstRoll() + currentFrame.getSecondRoll());
-            } else if (!currentFrame.isCompleteFrame() && currentFrame.isStrike() && i < frames.size()-1){
-                BowlingFrame nextFrame = frames.get(i+1);
-                if (nextFrame.getSecondRoll() > -1){
+            } else if (currentFrame instanceof StrikeFrame && !currentFrame.isCompleteFrame() && i < frames.size()-1){
+                AbstractFrame nextFrame = frames.get(i+1);
+                if (nextFrame instanceof SpareFrame && nextFrame.getSecondRoll() > -1){
                     currentFrame.setScore(currentFrame.getFirstRoll() + nextFrame.getFirstRoll() + nextFrame.getSecondRoll());
                     currentFrame.setCompleteFrame(true);
-                } else if (nextFrame.isStrike() && i+2 <= frames.size()-1) {
+                } else if (nextFrame instanceof StrikeFrame && i+2 <= frames.size()-1) {
                     currentFrame.setScore(currentFrame.getFirstRoll() + nextFrame.getFirstRoll() + frames.get(i+2).getFirstRoll());
                     currentFrame.setCompleteFrame(true);
                 } else {
                     currentFrame.setScore(currentFrame.getFirstRoll() + nextFrame.getFirstRoll());
                 }
-            } else if (!currentFrame.isCompleteFrame() && currentFrame.isSpare() && i < frames.size()-1){
-                BowlingFrame nextFrame = frames.get(i+1);
+            } else if (currentFrame instanceof SpareFrame && !currentFrame.isCompleteFrame() && i < frames.size()-1){
+                AbstractFrame nextFrame = frames.get(i+1);
                 currentFrame.setScore(currentFrame.getFirstRoll() + currentFrame.getSecondRoll() + nextFrame.getFirstRoll());
                 currentFrame.setCompleteFrame(true);
             }
@@ -197,7 +201,7 @@ public class GameService {
     public int getTotalScore (long gameId, String name) {
         Player player = playerRepo.findByNameAndGameId(name, gameId);
         if (player != null) {
-            List<BowlingFrame> frames = player.getFrames();
+            List<AbstractFrame> frames = player.getFrames();
             int total = 0;
             for (int i = 0; i < frames.size(); i++) {
                 total += frames.get(i).getScore();

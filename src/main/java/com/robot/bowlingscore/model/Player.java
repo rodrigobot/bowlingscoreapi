@@ -20,8 +20,8 @@ public class Player {
     private String name;
 
     // Association of a player and bowling frames
-    @OneToMany(mappedBy = "player",cascade = CascadeType.ALL, targetEntity = BowlingFrame.class, fetch = FetchType.LAZY)
-    private List<BowlingFrame> frames = new ArrayList<>(10);
+    @OneToMany(mappedBy = "player",cascade = CascadeType.ALL, targetEntity = AbstractFrame.class, fetch = FetchType.LAZY)
+    private List<AbstractFrame> frames = new ArrayList<>(10);
 
     // Association of a player and multiple games
     @ManyToOne
@@ -42,11 +42,11 @@ public class Player {
         this.name = name;
     }
 
-    public List<BowlingFrame> getFrames() {
+    public List<AbstractFrame> getFrames() {
         return frames;
     }
 
-    public void setFrames(List<BowlingFrame> frames) { this.frames = frames; }
+    public void setFrames(List<AbstractFrame> frames) { this.frames = frames; }
 
 
     public Game getGame() {
