@@ -11,8 +11,10 @@ import javax.persistence.*;
  * @author Rodrigo Soto
  */
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "EMP_TYPE")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class BowlingFrame {
+public abstract class BowlingFrame {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -26,8 +28,6 @@ public class BowlingFrame {
     private int secondRoll = -1;
     private int score = -1;
     private int rolls = 0;
-    private boolean spare = false;
-    private boolean strike = false;
     private boolean completeFrame = false;
 
     // This 2 variables will help in the special case for bonus balls on the tenth frame
@@ -56,22 +56,6 @@ public class BowlingFrame {
 
     public void setScore(int score) {
         this.score = score;
-    }
-
-    public void setSpare(boolean spare) {
-        this.spare = spare;
-    }
-
-    public boolean isSpare() {
-        return spare;
-    }
-
-    public void setStrike(boolean strike) {
-        this.strike = strike;
-    }
-
-    public boolean isStrike() {
-        return strike;
     }
 
     public void setPlayer(Player player) {
