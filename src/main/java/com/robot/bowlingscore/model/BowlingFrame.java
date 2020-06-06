@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 public class BowlingFrame extends AbstractFrame {
 
     public void calculateScore() {
-        if (getSecondRoll() > -1) {
+        if (getSecondRoll() > -1 && !isCompleteFrame()) {
             this.score = getFirstRoll() + getSecondRoll();
             this.setCompleteFrame(true);
         } else {

@@ -20,4 +20,15 @@ public class SpareFrame extends AbstractFrame {
         this.setFirstRoll(frame.getFirstRoll());
         this.setPlayer(frame.getPlayer());
     }
+
+    public void calculateScore(int score) {
+        if (!isCompleteFrame() && score > -1 && getSecondRoll() > -1) {
+            this.score = getFirstRoll() + getSecondRoll() + score;
+            this.setCompleteFrame(true);
+        } else if (!isCompleteFrame() && getSecondRoll() > -1) {
+            this.score = getFirstRoll() + getSecondRoll();
+        } else {
+            this.score = getFirstRoll();
+        }
+    }
 }

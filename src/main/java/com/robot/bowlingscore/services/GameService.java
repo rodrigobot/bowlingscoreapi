@@ -106,6 +106,12 @@ public class GameService {
                     temp.setPlayer(player);
                     temp.setRolls(1);
                     frames.add(temp);
+                } else if (frames.size() == 9) {
+                    AbstractFrame temp = new SpecialBonusFrame();
+                    temp.setFirstRoll(pins);
+                    temp.setPlayer(player);
+                    temp.setRolls(1);
+                    frames.add(temp);
                 } else {
                     StrikeFrame temp = new StrikeFrame();
                     temp.setFirstRoll(pins);
@@ -119,11 +125,11 @@ public class GameService {
                 temp.setSecondRoll(pins);
                 temp = isRollSpare(temp.getFirstRoll(), temp.getSecondRoll()) ? new SpareFrame(temp) : temp;
                 frames.set(frames.size()-1, temp);
-            } else if (frames.size() == 10 && frames.get(9) instanceof StrikeFrame && frames.get(9).getSecondRoll() == -1) {
+            } else if (frames.size() == 10 && frames.get(9) instanceof SpecialBonusFrame && frames.get(9).getRolls() == 1) {
                 AbstractFrame temp = frames.get(9);
-                temp.setBonusBalls(true);
+                temp.setRolls(2);
                 temp.setSecondRoll(pins);
-            } else if (frames.size() == 10 && frames.get(9) instanceof StrikeFrame && frames.get(9).getSecondRoll() != -1) {
+            } else if (frames.size() == 10 && frames.get(9) instanceof SpecialBonusFrame && frames.get(9).getRolls() == 2) {
                 AbstractFrame temp = frames.get(9);
                 temp.setBonusBall(pins);
             }
@@ -149,42 +155,32 @@ public class GameService {
             AbstractFrame currentFrame = frames.get(i);
             if (frames.size() == 10) {
                 if (currentFrame instanceof BowlingFrame) {
-                    currentFrame.setScore(currentFrame.getFirstRoll() + currentFrame.getSecondRoll());
-                    currentFrame.setCompleteFrame(true);
-                } else if(currentFrame.getSecondRoll() != -1 && currentFrame.getBonusBall() != -1) {
-                    currentFrame.setScore(currentFrame.getFirstRoll() + currentFrame.getSecondRoll() + currentFrame.getBonusBall());
-                    currentFrame.setCompleteFrame(true);
-                } else if (currentFrame.getSecondRoll() != -1 && currentFrame.getBonusBall() == -1) {
-                    currentFrame.setScore(currentFrame.getFirstRoll() + currentFrame.getSecondRoll());
-                } else if (currentFrame.getSecondRoll() != -1) {
-                    currentFrame.setScore(currentFrame.getFirstRoll());
+                    ((BowlingFrame) currentFrame).calculateScore();
+                } else if (currentFrame instanceof SpecialBonusFrame) {
+                    ((SpecialBonusFrame) currentFrame).calculateScore();
                 }
             }
 
-            if (currentFrame instanceof BowlingFrame && !currentFrame.isCompleteFrame() && currentFrame.getRolls() == 2) {
-                currentFrame.setScore(currentFrame.getFirstRoll() + currentFrame.getSecondRoll());
-                currentFrame.setCompleteFrame(true);
-            } else if (currentFrame instanceof BowlingFrame && !currentFrame.isCompleteFrame() && currentFrame.getRolls() ==1) {
-                currentFrame.setScore(currentFrame.getFirstRoll());
-            } else if (currentFrame instanceof StrikeFrame && !currentFrame.isCompleteFrame() && i == frames.size()-1){
-                currentFrame.setScore(currentFrame.getFirstRoll());
-            } else if (currentFrame instanceof SpareFrame && !currentFrame.isCompleteFrame() && i == frames.size()-1) {
-                currentFrame.setScore(currentFrame.getFirstRoll() + currentFrame.getSecondRoll());
-            } else if (currentFrame instanceof StrikeFrame && !currentFrame.isCompleteFrame() && i < frames.size()-1){
+            if (currentFrame instanceof BowlingFrame) {
+                ((BowlingFrame) currentFrame).calculateScore();
+            } else if (currentFrame instanceof StrikeFrame && i == frames.size()-1){
+                ((StrikeFrame) currentFrame).calculateScore(-1, -1);
+            } else if (currentFrame instanceof StrikeFrame && i < frames.size()-1){
                 AbstractFrame nextFrame = frames.get(i+1);
-                if (nextFrame instanceof SpareFrame && nextFrame.getSecondRoll() > -1){
-                    currentFrame.setScore(currentFrame.getFirstRoll() + nextFrame.getFirstRoll() + nextFrame.getSecondRoll());
-                    currentFrame.setCompleteFrame(true);
+                if (nextFrame instanceof SpareFrame){
+                    ((StrikeFrame) currentFrame).calculateScore(nextFrame.getFirstRoll(), nextFrame.getSecondRoll());
                 } else if (nextFrame instanceof StrikeFrame && i+2 <= frames.size()-1) {
-                    currentFrame.setScore(currentFrame.getFirstRoll() + nextFrame.getFirstRoll() + frames.get(i+2).getFirstRoll());
-                    currentFrame.setCompleteFrame(true);
+                    ((StrikeFrame) currentFrame).calculateScore(nextFrame.getFirstRoll(), frames.get(i+2).getFirstRoll());
+                } else if (nextFrame instanceof SpecialBonusFrame){
+                    ((StrikeFrame) currentFrame).calculateScore(nextFrame.getFirstRoll(), nextFrame.getSecondRoll());
                 } else {
-                    currentFrame.setScore(currentFrame.getFirstRoll() + nextFrame.getFirstRoll());
+                    ((StrikeFrame) currentFrame).calculateScore(nextFrame.getFirstRoll(), -1);
                 }
-            } else if (currentFrame instanceof SpareFrame && !currentFrame.isCompleteFrame() && i < frames.size()-1){
+            } else if (currentFrame instanceof SpareFrame && i == frames.size()-1) {
+                ((SpareFrame) currentFrame).calculateScore(-1);
+            } else if (currentFrame instanceof SpareFrame && i < frames.size()-1){
                 AbstractFrame nextFrame = frames.get(i+1);
-                currentFrame.setScore(currentFrame.getFirstRoll() + currentFrame.getSecondRoll() + nextFrame.getFirstRoll());
-                currentFrame.setCompleteFrame(true);
+                ((SpareFrame) currentFrame).calculateScore(nextFrame.getFirstRoll());
             }
         }
 

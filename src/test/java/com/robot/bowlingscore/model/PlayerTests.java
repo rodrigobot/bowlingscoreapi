@@ -56,7 +56,7 @@ public class PlayerTests {
 
     @Test
     public void testSetFrames() {
-        List<BowlingFrame> frames = new ArrayList<>();
+        List<AbstractFrame> frames = new ArrayList<>();
         BowlingFrame frame = new BowlingFrame();
         frames.add(frame);
         p.setFrames(frames);
