@@ -105,12 +105,12 @@ public class BowlingScoreControllerTests {
 
         mvc.perform(MockMvcRequestBuilders.put("/game/1/player/rodrigo/roll/4").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string("{\"name\":\"rodrigo\",\"frames\":[{\"id\":1,\"player\":\"rodrigo\",\"firstRoll\":4,\"secondRoll\":-1,\"score\":4,\"rolls\":1,\"spare\":false,\"strike\":false,\"completeFrame\":false,\"bonusBalls\":false,\"bonusBall\":-1}],\"game\":{\"id\":1,\"players\":[\"rodrigo\"]}}"));
+                .andExpect(content().string("{\"name\":\"rodrigo\",\"frames\":[{\"id\":1,\"player\":\"rodrigo\",\"firstRoll\":4,\"secondRoll\":-1,\"score\":4,\"rolls\":1,\"completeFrame\":false,\"bonusBalls\":false,\"bonusBall\":-1}],\"game\":{\"id\":1,\"players\":[\"rodrigo\"]}}"));
     }
 
 
 
-        @Test
+    @Test
     public void testGetTotalScoreEmptyFrames() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/game").accept(MediaType.APPLICATION_JSON));
 
@@ -163,5 +163,26 @@ public class BowlingScoreControllerTests {
                 .andExpect(content().string("300"));
     }
 
+    @Test
+    public void testGetTotalScoreSpareFinalFrame() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/game").accept(MediaType.APPLICATION_JSON));
 
+        JSONArray json = new JSONArray("[test]");
+        mvc.perform(MockMvcRequestBuilders.post("/game/1/player").accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json.toString()));
+
+        for (int i=0; i< 10; i++) {
+            mvc.perform(MockMvcRequestBuilders.put("/game/1/player/test/roll/10").accept(MediaType.APPLICATION_JSON));
+        }
+
+        for (int i=0; i< 2; i++) {
+            mvc.perform(MockMvcRequestBuilders.put("/game/1/player/test/roll/5").accept(MediaType.APPLICATION_JSON));
+        }
+
+        mvc.perform(MockMvcRequestBuilders.get("/game/1/player/test/score").accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("280"));
+    }
 }

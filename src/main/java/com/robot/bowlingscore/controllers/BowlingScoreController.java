@@ -55,7 +55,6 @@ public class BowlingScoreController {
      * @return A Json representation of a game which contains an ID, list of players and frames per player
      */
     @GetMapping("/game/{gameId}")
-
     public Game getGameInformation(@PathVariable("gameId") long gameId) {
         Game game = gameService.getGame(gameId);
         if (game == null) {

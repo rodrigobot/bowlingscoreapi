@@ -21,7 +21,7 @@ public class FrameTests {
     @Autowired
     private TestEntityManager entityManager;
 
-    private BowlingFrame frame;
+    private AbstractFrame frame;
 
     @Before
     public void setUp() {
@@ -35,30 +35,32 @@ public class FrameTests {
 
     @Test
     public void testPersistNewFrame() {
-        BowlingFrame savedData = entityManager.persistFlushFind(frame);
+        AbstractFrame savedData = entityManager.persistFlushFind(frame);
 
         assertThat(savedData.getId()).isEqualTo(1L);
     }
 
+
     @Test
     public void testSetIsSpareAndIsSpare() {
-        BowlingFrame savedData = entityManager.persistFlushFind(frame);
-        savedData.setSpare(true);
+        SpareFrame spare = new SpareFrame();
+        AbstractFrame savedData = entityManager.persistFlushFind(spare);
         savedData = entityManager.persistFlushFind(savedData);
-        assertThat(savedData.isSpare()).isEqualTo(true);
+        assertThat(savedData instanceof SpareFrame);
     }
+
 
     @Test
     public void testSetIsStrikeAndIsStrike() {
-        BowlingFrame savedData = entityManager.persistFlushFind(frame);
-        savedData.setStrike(true);
+        StrikeFrame strike = new StrikeFrame();
+        AbstractFrame savedData = entityManager.persistFlushFind(strike);
         savedData = entityManager.persistFlushFind(savedData);
-        assertThat(savedData.isStrike()).isEqualTo(true);
+        assertThat(savedData instanceof StrikeFrame);
     }
 
     @Test
     public void testSetBonusBallAndIsBonusBall() {
-        BowlingFrame savedData = entityManager.persistFlushFind(frame);
+        AbstractFrame savedData = entityManager.persistFlushFind(frame);
         savedData.setBonusBalls(true);
         savedData = entityManager.persistFlushFind(savedData);
         assertThat(savedData.isBonusBalls()).isEqualTo(true);
@@ -66,7 +68,7 @@ public class FrameTests {
 
     @Test
     public void testSetFirstRollAndGetFirstRoll() {
-        BowlingFrame savedData = entityManager.persistFlushFind(frame);
+        AbstractFrame savedData = entityManager.persistFlushFind(frame);
         savedData.setFirstRoll(4);
         savedData = entityManager.persistFlushFind(savedData);
         assertThat(savedData.getFirstRoll()).isEqualTo(4);
@@ -74,7 +76,7 @@ public class FrameTests {
 
     @Test
     public void testSetSecondRollAndGetSecondRoll() {
-        BowlingFrame savedData = entityManager.persistFlushFind(frame);
+        AbstractFrame savedData = entityManager.persistFlushFind(frame);
         savedData.setSecondRoll(9);
         savedData = entityManager.persistFlushFind(savedData);
         assertThat(savedData.getSecondRoll()).isEqualTo(9);
@@ -82,7 +84,7 @@ public class FrameTests {
 
     @Test
     public void testSetScoreAndGetScore() {
-        BowlingFrame savedData = entityManager.persistFlushFind(frame);
+        AbstractFrame savedData = entityManager.persistFlushFind(frame);
         savedData.setScore(10);
         savedData = entityManager.persistFlushFind(savedData);
         assertThat(savedData.getScore()).isEqualTo(10);
@@ -90,7 +92,7 @@ public class FrameTests {
 
     @Test
     public void testSetRollsAndGetRolls() {
-        BowlingFrame savedData = entityManager.persistFlushFind(frame);
+        AbstractFrame savedData = entityManager.persistFlushFind(frame);
         savedData.setRolls(2);
         savedData = entityManager.persistFlushFind(savedData);
         assertThat(savedData.getRolls()).isEqualTo(2);
@@ -98,7 +100,7 @@ public class FrameTests {
 
     @Test
     public void testSetIsCompleteAndIsComplete() {
-        BowlingFrame savedData = entityManager.persistFlushFind(frame);
+        AbstractFrame savedData = entityManager.persistFlushFind(frame);
         savedData.setCompleteFrame(true);
         savedData = entityManager.persistFlushFind(savedData);
         assertThat(savedData.isCompleteFrame()).isEqualTo(true);
