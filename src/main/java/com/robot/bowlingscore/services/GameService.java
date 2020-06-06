@@ -113,7 +113,7 @@ public class GameService {
                     temp.setRolls(1);
                     frames.add(temp);
                 } else {
-                    StrikeFrame temp = new StrikeFrame();
+                    AbstractFrame temp = new StrikeFrame();
                     temp.setFirstRoll(pins);
                     temp.setPlayer(player);
                     temp.setRolls(2);
